@@ -6,6 +6,8 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const TABLE = process.env.MYSQL_TABLE_NAME;
 
+app.use(express.json())
+
 const db = mysql.createConnection({
   host: "localhost",
   user: process.env.MYSQL_USERNAME,
@@ -18,8 +20,28 @@ app.get("/books", (req, res) => {
   db.query(q, (err, data) => {
     if (err) {
       console.log(err);
+      return res.status(500).json({ error: "Database error" });
     } else {
       return res.json(data);
+    }
+  });
+});
+
+app.post("/books", (req, res) => {
+  const q = `INSERT INTO ${TABLE} (title, about, price, cover) VALUES (?)`;
+  const values = [
+    req.body.title,
+    req.body.about,
+    req.body.price,
+    req.body.cover,
+  ];
+  // this is how we pass parameters to the query; the values will replace the '?' in the query
+  db.query(q, [values], (err, data) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Database error" });
+    } else {
+      return res.json("Book has been added successfully");
     }
   });
 });
