@@ -63,6 +63,28 @@ app.delete("/books/:id", (req, res) => {
   })
 })
 
+app.put("/books/:id", (req, res) => {
+  const bookId = req.params.id
+  const q = "UPDATE books SET title=?, about=?, price=?, cover=? WHERE id=?"
+
+  const values = [
+    req.body.title,
+    req.body.about,
+    req.body.price,
+    req.body.cover,
+  ];
+
+  db.query(q, [...values, bookId], (err, data) => {
+    if(err) {
+      console.log(err)
+      return res.status(500).json({error: "Database error"})
+    }
+    else {
+      return res.json("Book has been updated successfully")
+    }
+  })
+})
+
 app.listen(8080, () => {
   console.log(`Server listening on port ${PORT}`);
 });

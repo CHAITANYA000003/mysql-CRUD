@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const URL = "http://localhost:8080";
 
@@ -13,6 +13,9 @@ const Update = () => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
+  //   console.log(location.pathname.split("/")[2]);
+  const bookId = location.pathname.split("/")[2];
 
   const handleChange = (e) => {
     setBook((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -21,7 +24,7 @@ const Update = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${URL}/books`, book);
+      await axios.put(`${URL}/books/${bookId}`, book);
       //   we want to navigate back to the home page once the button is clicked, we do this using the useNavigate of react-router-dom
       navigate("/");
     } catch (err) {
